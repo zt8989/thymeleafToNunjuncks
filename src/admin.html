@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="zh-CN" dir="ltr"
+      th:attr="data-page=(${primaryPageTitle} and ${pageTitle} ? (${user.unionViews.currentAppId} + '-' + ${primaryPageTitle} + '-' + (${secondaryPageTitle} ? ${secondaryPageTitle} : ${pageTitle})) : ''), data-slug=(${primaryPage} and ${secondaryPage} ? (${primaryPage} + '-' + ${secondaryPage}) : '')">
+<head th:with="timestamp=${#dates.format(#dates.createNow(),'yyyyMMddHH')}, muuBase='//img.maihaoche.com/mhc-fe/muu/1.6.6',cdnBase='//img.maihaoche.com'">
+<meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="renderer" content="webkit" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1,user-scalable=no,minimal-ui" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="grey" />
+    <meta name="screen-orientation" content="portrait" />
+    <meta name="x5-orientation" content="portrait" />
+    <meta name="format-detection" content="telephone=no,email=no" />
+    <meta name="wap-font-scale" content="no" />
+    <title th:text="${pageTitle} + ' - 运输管理系统'"></title>
+    <link rel="icon" th:href="${muuBase} + @{/muu/images/favicon.png}" />
+    <link rel="stylesheet" th:href="${muuBase} + @{/select2/dist/css/select2.min.css}" />
+    <link rel="stylesheet" th:href="${muuBase} + @{/muu/stylesheets/admin.min.css}" />
+    <link rel="stylesheet" th:href="${muuBase} + @{/bootstrap-table/dist/bootstrap-table.min.css}" />
+    <link rel="stylesheet" th:href="@{/admin/assets/reset.css(t=${timestamp})}" />
+    <!--[if lt IE 9]>
+    <script th:src="${muuBase} + @{/html5shiv/dist/html5shiv.min.js}"></script>
+    <![endif]-->
+    <script th:src="@{/admin/vendors/modjs/mod.js(t=${timestamp})}"></script>
+    <script th:src="${muuBase} + @{/muu/javascripts/all.min.js}"></script>
+    <script th:src="${cdnBase} + @{/common/vendor/doT-1.1.0/doT.min.js}"></script>
+    <script th:src="${cdnBase}+@{/common/vendor/layer-3.0.3/build/layer.js}"></script>
+    <!--<script th:src="@{/admin/assets/muu.js(t=${timestamp})}"></script>-->
+    <script th:src="@{/admin/vendors/mockjs/dist/mock.js}" th:if="${#arrays.contains(@environment.getActiveProfiles(),'local')}"></script>
+    <script th:src="@{/admin/assets/api-mock.js}" th:if="${#arrays.contains(@environment.getActiveProfiles(),'local')}"></script>
+    <script th:inline="javascript">
+      window.userId = /*[[${user.userId}]]*/ undefined;
+      muu.setDefaults({
+        watermark: {
+          text: /*[[${user.realName}]]*/ ""
+        }
+      });
+    </script>
+    <script th:src="@{/admin/assets/global.js(t=${timestamp})}" defer="defer"></script>
+  </head>
+  <body class="Page" th:with="timestamp=${#dates.format(#dates.createNow(),'yyyyMMddHH')}, muuBase='//img.maihaoche.com/mhc-fe/muu/1.6.6'">
+    <header class="Page-header Header">
+      <div class="Header-brand">
+        <a href="/"><img th:src="${muuBase} + @{/muu/images/logo.png}" th:attr="srcset=(${muuBase} + @{/muu/images/logo-2x.png} + ' 2x')" alt="卖好车" /><span>运输管理</span></a>
+      </div>
+      <div class="Header-extra">
+        <div class="Header-operations">
+          <th:block layout:fragment="headerActions"></th:block>
+          <div class="Header-action Action" th:if="${creatable}"><button class="Action-trigger fa fa-plus js-add--header" type="button" data-toggle="modal" data-target=".js-addNewData" title="新增"><span class="sr-only">新增</span></button></div>
+          <th:block th:if="${user != null}">
+            <div class="Header-action Action Action--avatar"><a class="Action-trigger" href="javascript:void(0);"><span th:text="${user.name}"></span></a>
+              <div class="Action-content Card">
+                <div class="Card-content">
+                  <ul th:object="${user}">
+                    <li th:if="*{mobile}" th:text="*{mobile}"></li>
+                    <li th:if="*{email}" th:text="*{email}"></li>
+                  </ul>
+                </div>
+                <div class="Card-footer">
+                  <a th:href="@{/logout.htm}" class="btn btn-default btn-xs">退出</a>
+                </div>
+              </div>
+            </div>
+          </th:block>
+        </div>
+      </div>
+    </header>
+    <main class="Page-body">
+      <div class="Page-sidebar" th:replace="admin/partials/layout-sidebar-universal :: sidebar"></div>
+      <div class="Page-content">
+        <th:block layout:fragment="fullScreen"></th:block>
+        <div class="Content container-fluid js-watermark" style="position: relative;">
+          <div class="Content-header">
+            <div class="Breadcrumb"><i class="fa fa-map-marker"></i><ul>
+              <li th:text="${primaryPageTitle}" th:if="${primaryPageTitle}"></li>
+              <li th:text="${secondaryPageTitle}" th:if="${secondaryPageTitle}"></li>
+              <li th:text="${pageTitle}"></li>
+            </ul></div>
+            <h1 th:text="(${pageTitleSpecial} ? ${pageTitleSpecial} : ${pageTitle})"></h1>
+          </div>
+          <th:block layout:fragment="headExtra"></th:block>
+          <th:block layout:fragment="content"></th:block>
+          <th:block layout:fragment="query"></th:block>
+          <th:block layout:fragment="extra"></th:block>
+          <div class="Area Area--table">
+            <th:block layout:fragment="mainDataTableList">
+              <table class="js-showDataTable"></table>
+            </th:block>
+          </div>
+        </div>
+        <th:block layout:fragment="modal"></th:block>
+      </div>
+    </main>
+    <th:block layout:fragment="bodyAssets"></th:block>
+  </body>
+</html>
