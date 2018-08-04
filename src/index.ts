@@ -4,10 +4,14 @@ import util from 'util';
 import fs from 'fs';
 import path from 'path';
 
-import Processor from './processors/Processor';
 import BlockProcessor from './processors/BlockProcessor';
 import DefaultProcessor from './processors/DefaultProcessor';
 import Matcher from './processors/Matcher';
+import IfAttributeProcessor from './processors/IfAttributeProcessor';
+import FragmentAttributeProcessor from './processors/FragmentAttributeProcessor';
+import SingleElementProcessor from './processors/ScriptProcessor';
+import TextAttributeProcessor from './processors/TextAttributeProcessor';
+import ElementProcessor from './processors/ElementProcessor';
 
 function deserialize(htmlString: string | Buffer) {
   const dom = new JSDOM(htmlString)
@@ -20,13 +24,19 @@ function serialize(dom: jsdom.JSDOM) {
 
 class convertEngine {
   private htmlList: String[]
-  private processors: Processor[]
+  private processors: ElementProcessor[]
   private matcher: Matcher
 
   constructor(){
     this.htmlList = []
-    this.processors = [new BlockProcessor(), new DefaultProcessor()]
     this.matcher = new Matcher()
+    const attributeProcessors = [
+      new TextAttributeProcessor(),
+      new IfAttributeProcessor(), 
+      new FragmentAttributeProcessor()]
+    this.processors = [new BlockProcessor(attributeProcessors),
+      new SingleElementProcessor(attributeProcessors),
+      new DefaultProcessor(attributeProcessors)]
   }
 
   process(template: string | Buffer, content = {}) {
@@ -64,7 +74,7 @@ class convertEngine {
     if(element === null) return
     let start = "", end = ""
     for (let processor of this.processors) {
-      if (this.matcher.match(element, processor)) {
+      if (processor.accept(element)) {
         [start, end] = processor.process(element, context)
         break
       }
@@ -75,7 +85,7 @@ class convertEngine {
       await this.processNode(child, context)
     }
 
-    this.htmlList.push(end)
+    this.htmlList.push(end + "\n")
   }
 }
 

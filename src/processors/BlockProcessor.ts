@@ -1,17 +1,16 @@
-import Processor from "./Processor";
+import AttributeProcessor from "./AttributeProcessor";
+import DefaultProcessor from "./DefaultProcessor";
 
-export default class BlockProcessor implements Processor{
+export default class BlockProcessor extends DefaultProcessor{
+  constructor(attributeProcessors: AttributeProcessor[]){
+    super(attributeProcessors)
+  }
+
   accept(element: Element): boolean {
     return element.tagName === "TH:BLOCK"
   }
   
   process(element: Element, context: any): string[] {
-    let value = element.getAttribute("layout:fragment")
-    if(value){
-      return [`{% block ${value} %}`, `{% endblock %}`]
-    }else{
-      console.log(element.outerHTML)
-      throw Error('missing attribute layout:fragment')
-    }
+    return super.process(element, context)
   }
 }

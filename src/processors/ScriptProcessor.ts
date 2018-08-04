@@ -1,8 +1,7 @@
 import ElementProcessor from "./ElementProcessor";
 import AttributeProcessor from "./AttributeProcessor";
-import { getElementStringWithoutChildren } from "./helper";
 
-export default class DefaultProcessor implements ElementProcessor {
+export default class SingleElementProcessor implements ElementProcessor {
   attributeProcessors: AttributeProcessor[];
 
   constructor(attributeProcessors: AttributeProcessor[]){
@@ -10,16 +9,10 @@ export default class DefaultProcessor implements ElementProcessor {
   }
 
   accept(element: Element): boolean {
-    return true
+    return element.children.length === 0
   }  
   
   process(element: Element, context: any): string[] {
-    for(let processor of this.attributeProcessors){
-      if(processor.accept(element)){
-        const result = processor.process(element, context)
-      }
-    }
-
-    return getElementStringWithoutChildren(element)
+    return [element.outerHTML, ""]
   }
 }

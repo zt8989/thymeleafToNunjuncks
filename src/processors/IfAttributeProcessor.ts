@@ -1,7 +1,7 @@
 import AttributeProcessor from "./AttributeProcessor";
 
 export default class IfAttributeProcessor implements AttributeProcessor{
-  attribute = "th:block"
+  attribute = "th:if"
 
   accept(element: Element): boolean {
     return element.hasAttribute(this.attribute)

@@ -1,5 +1,5 @@
-import Processor from "./Processor";
-
-export default interface AttributeProcessor extends Processor{
+export default interface AttributeProcessor {
   readonly attribute: string
+  accept(element: Element): boolean
+  process(element: Element, context: any): string[] | void
 }
