@@ -10,7 +10,7 @@ export default class BlockProcessor extends DefaultProcessor{
     return element.tagName === "TH:BLOCK"
   }
   
-  process(element: Element, context: any): string[] {
+  process(element: Element, context: any): [string[], string[]] {
     return super.process(element, context)
   }
 }

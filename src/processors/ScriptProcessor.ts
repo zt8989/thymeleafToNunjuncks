@@ -12,7 +12,7 @@ export default class SingleElementProcessor implements ElementProcessor {
     return element.children.length === 0
   }  
   
-  process(element: Element, context: any): string[] {
-    return [element.outerHTML, ""]
+  process(element: Element, context: any): [string[], string[]] {
+    return [[element.outerHTML], [""]]
   }
 }

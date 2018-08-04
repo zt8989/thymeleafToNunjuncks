@@ -12,6 +12,9 @@ import FragmentAttributeProcessor from './processors/FragmentAttributeProcessor'
 import SingleElementProcessor from './processors/ScriptProcessor';
 import TextAttributeProcessor from './processors/TextAttributeProcessor';
 import ElementProcessor from './processors/ElementProcessor';
+import HrefAttributeProcessor from './processors/HrefAttributeProcessor';
+import SrcAttributeProcessor from './processors/SrcAttributeProcessor';
+import InlineAttributeProcessor from './processors/InlineAttributeProcessor';
 
 function deserialize(htmlString: string | Buffer) {
   const dom = new JSDOM(htmlString)
@@ -23,7 +26,7 @@ function serialize(dom: jsdom.JSDOM) {
 }
 
 class convertEngine {
-  private htmlList: String[]
+  private htmlList: string[]
   private processors: ElementProcessor[]
   private matcher: Matcher
 
@@ -32,10 +35,12 @@ class convertEngine {
     this.matcher = new Matcher()
     const attributeProcessors = [
       new TextAttributeProcessor(),
+      new HrefAttributeProcessor(),
+      new SrcAttributeProcessor(),
+      new InlineAttributeProcessor(),
       new IfAttributeProcessor(), 
       new FragmentAttributeProcessor()]
     this.processors = [new BlockProcessor(attributeProcessors),
-      new SingleElementProcessor(attributeProcessors),
       new DefaultProcessor(attributeProcessors)]
   }
 
@@ -58,7 +63,7 @@ class convertEngine {
   processFile() {
     const readFile = util.promisify(fs.readFile)
     readFile(path.join(__dirname, './admin.html')).then(content => {
-      this.process(content).then(() => console.log(this.htmlList.join('')))
+      this.process(content).then(() => console.log(this.htmlList.join('\n')))
     })
   }
 
@@ -72,7 +77,7 @@ class convertEngine {
    */
   async processNode(element: Element | null, context = {}) {
     if(element === null) return
-    let start = "", end = ""
+    let start: string[] = [], end: string[] = []
     for (let processor of this.processors) {
       if (processor.accept(element)) {
         [start, end] = processor.process(element, context)
@@ -80,12 +85,16 @@ class convertEngine {
       }
     }
 
-    this.htmlList.push(start)
-    for (let child of element.children) {
-      await this.processNode(child, context)
+    this.htmlList.push(...start)
+    if(element.children.length > 0){
+      for (let child of element.children) {
+        await this.processNode(child, context)
+      }
+    } else {
+      this.htmlList.push(element.textContent || "")
     }
 
-    this.htmlList.push(end + "\n")
+    this.htmlList.push(...end)
   }
 }
 
