@@ -6,10 +6,10 @@ import Result from "../parserCominator/Result";
 
 export class Rule {
   name: string
-  expression: Match
+  expression: Match | Match[]
   matchProcessor: MatchProcessor
 
-  constructor(name: string, expression: Match, mathProcessor:MatchProcessor = DefaultMatch){
+  constructor(name: string, expression: Match | Match[], mathProcessor:MatchProcessor = DefaultMatch){
     this.name = name
     this.expression = expression
     this.matchProcessor = mathProcessor

@@ -15,8 +15,7 @@ export default class Parser {
     return matchResult
   }
 
-  parseExpression(input: InputBuffer, expression: Match | Match[]): MatchResult{
-   let matchResult: string[] = []
+  parseExpression(input: InputBuffer, expression: Match | Match[]):MatchResult {
     if(expression instanceof RegExp){
       const result = input.read(expression)
       if(!result){
@@ -25,8 +24,9 @@ export default class Parser {
       return [result[0]]
     } else if(typeof expression === 'string'){
       let rule = this.grammer.findRuleByName(expression)
-      return this.parseExpression(input, rule.expression)
-    }else{
+      return rule.accept(input, this)
+    }else if(expression instanceof Array){
+      const matchResult = []
       for(let exp of expression){
         let result = this.parseExpression(input, exp)
         if(!result){
@@ -34,7 +34,9 @@ export default class Parser {
         }
         matchResult.push(result[0])
       }
+      return matchResult
+    } else {
+      return expression(input, this)
     }
-    return matchResult
   }
 }

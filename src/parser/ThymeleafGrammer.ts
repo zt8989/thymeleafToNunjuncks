@@ -1,10 +1,10 @@
 import Grammer from "./Grammer";
 import { Rule } from "./Rule";
-import { Sequence } from "./helper";
+import { Sequence, orderChoice } from "./helper";
 
 export default new Grammer("thymeleaf", 
-	// new Rule('Expression', ),
-	new Rule('IfElse', 
+	new Rule('Expression', [/\(/, orderChoice('Expression', 'IfElseExpression'), /\)/]),
+	new Rule('IfElseExpression', 
 		['VariableExpression', /\?/, 'VariableExpression', /:/, 'VariableExpression'],
 	),
 	new Rule('VariableExpression',
