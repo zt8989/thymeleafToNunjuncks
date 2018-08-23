@@ -12,6 +12,10 @@ export default class DefaultProcessor implements ElementProcessor {
   accept(element: Element): boolean {
     return true
   }  
+
+  getElementStringWithoutChildren(element: Element){
+    return getElementStringWithoutChildren(element)
+  }
   
   process(element: Element, context: any): [string[], string[]] {
     const htmlData:[string[], string[]] = [[] , []]
@@ -25,7 +29,7 @@ export default class DefaultProcessor implements ElementProcessor {
       }
     }
 
-    const elementData  = getElementStringWithoutChildren(element)
+    const elementData  = this.getElementStringWithoutChildren(element)
     htmlData[0].push(elementData[0])
     htmlData[1].push(elementData[1])
     return [htmlData[0], htmlData[1].reverse()]

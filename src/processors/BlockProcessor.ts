@@ -9,6 +9,10 @@ export default class BlockProcessor extends DefaultProcessor{
   accept(element: Element): boolean {
     return element.tagName === "TH:BLOCK"
   }
+
+  getElementStringWithoutChildren(element: Element): [string, string]{
+    return ['','']
+  }
   
   process(element: Element, context: any): [string[], string[]] {
     return super.process(element, context)
