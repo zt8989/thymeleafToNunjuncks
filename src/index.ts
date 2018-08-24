@@ -15,6 +15,8 @@ import ElementProcessor from './processors/ElementProcessor';
 import HrefAttributeProcessor from './processors/HrefAttributeProcessor';
 import SrcAttributeProcessor from './processors/SrcAttributeProcessor';
 import InlineAttributeProcessor from './processors/InlineAttributeProcessor';
+import WithAttributeProcessor from './processors/WithAttributeProcessor';
+import ReplaceAttributeProcessor from './processors/ReplaceAttributeProcessor';
 
 function deserialize(htmlString: string | Buffer) {
   const dom = new JSDOM(htmlString)
@@ -39,7 +41,10 @@ class convertEngine {
       new SrcAttributeProcessor(),
       new InlineAttributeProcessor(),
       new IfAttributeProcessor(), 
-      new FragmentAttributeProcessor()]
+      new FragmentAttributeProcessor(),
+      new WithAttributeProcessor(),
+      new ReplaceAttributeProcessor()
+    ]
     this.processors = [new BlockProcessor(attributeProcessors),
       new DefaultProcessor(attributeProcessors)]
   }

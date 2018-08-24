@@ -18,7 +18,7 @@ export default new Grammer("thymeleaf",
 	),
 	new Rule('LinkExpression',
 		RegularExpression(/^@\{(.+?)(\(.+\))?\}$/, ['Url', 'UrlParameters']),
-		([, url, parameters]) => [url, parameters]
+		([, url, parameters]) => [`'${url}'`]
 	),
 	new Rule('Url', /.+/),
 	new Rule('UrlParameters', /\((.+)\)/),

@@ -1,4 +1,5 @@
 import AttributeProcessor from "./AttributeProcessor";
+import ParserFactory from '../parser/ParserFactory'
 
 export default class HTMLAttributeProcessor implements AttributeProcessor{
   attribute: string
@@ -15,7 +16,8 @@ export default class HTMLAttributeProcessor implements AttributeProcessor{
   
   process(element: Element, context: any): [string, string] | void {
     const value = element.getAttribute(this.fullAttribute)
+    const parsed = ParserFactory.parse(value)
     element.removeAttribute(this.fullAttribute)
-    element.setAttribute(this.attribute, `{{ ${value} }}`)
+    element.setAttribute(this.attribute, `{{ ${parsed} }}`)
   }
 }

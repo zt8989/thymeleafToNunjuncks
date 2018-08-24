@@ -2,7 +2,6 @@ import { Match, DefaultMatch, MatchResult, MatchProcessor } from "./Match";
 import InputBuffer from "./InputBuffer";
 import Parser from "./Parser";
 import Grammer from "./Grammer";
-import Result from "../parserCominator/Result";
 
 export class Rule {
   name: string
@@ -17,6 +16,6 @@ export class Rule {
 
   accept(input: InputBuffer, parser: Parser): MatchResult{
     const matchResult = parser.parseExpression(input, this.expression)
-    return this.matchProcessor(matchResult)
+    return matchResult ? this.matchProcessor(matchResult): null
   }
 }

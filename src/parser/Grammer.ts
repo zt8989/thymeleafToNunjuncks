@@ -12,9 +12,7 @@ export default class Grammer {
     this.rules = rules
   }
 
-  accept(input: InputBuffer, parser: Parser): MatchResult{
-    let matchResult: string[] = []
-    while(!input.end()){
+  guessRule(input: InputBuffer){
       let rule: Rule
       switch(input.lookAhead()){
         case "'":
@@ -28,11 +26,27 @@ export default class Grammer {
           break
         case "+":
         case "-":
-        case "*":
         case "/":
           rule = this.findRuleByName('Op')
           break
+        case "*":
+          if(input.lookAhead(2) === '*{'){
+            rule = this.findRuleByName('Nothing')
+          }else{
+            rule = this.findRuleByName('Op')
+          }
+          break
+        case "#":
+          rule = this.findRuleByName('Nothing')
+        break
       }
+      return rule
+  }
+
+  accept(input: InputBuffer, parser: Parser): MatchResult{
+    let matchResult: string[] = []
+    while(!input.end()){
+      let rule = this.guessRule(input)
       if(rule){
         let result = rule.accept(input, parser)
         if(result){

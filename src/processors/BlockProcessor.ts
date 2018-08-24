@@ -7,7 +7,7 @@ export default class BlockProcessor extends DefaultProcessor{
   }
 
   accept(element: Element): boolean {
-    return element.tagName === "TH:BLOCK"
+    return element.tagName === "TH:BLOCK" || element.hasAttribute('th:replace')
   }
 
   getElementStringWithoutChildren(element: Element): [string, string]{

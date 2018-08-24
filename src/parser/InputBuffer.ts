@@ -13,7 +13,7 @@ export default class InputBuffer {
     return this.input.length === this.position
 	}
 	
-	lookAhead(){
+	lookAhead(count: number = 1){
     let remaining = this.input.substring(this.position)
     let matchWhitespace = remaining.match(/^\s+/);
     let leadingWhitespace: string  = ''
@@ -21,10 +21,10 @@ export default class InputBuffer {
 			leadingWhitespace = matchWhitespace[0];
 			remaining = remaining.substring(leadingWhitespace.length);
 		}
-		if(remaining.length === 0){
+		if(remaining.length < count){
 			return null
 		}else{
-			return remaining[0]
+			return remaining.slice(0, count)
 		}
 	}
 
