@@ -30,8 +30,10 @@ export default class DefaultProcessor implements ElementProcessor {
     }
 
     const elementData  = this.getElementStringWithoutChildren(element)
-    htmlData[0].push(elementData[0])
-    htmlData[1].push(elementData[1])
+    if(elementData){
+      htmlData[0].push(elementData[0])
+      htmlData[1].push(elementData[1])
+    }
     return [htmlData[0], htmlData[1].reverse()]
   }
 }

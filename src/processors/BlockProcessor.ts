@@ -7,11 +7,13 @@ export default class BlockProcessor extends DefaultProcessor{
   }
 
   accept(element: Element): boolean {
-    return element.tagName === "TH:BLOCK" || element.hasAttribute('th:replace')
+    return element.tagName === "TH:BLOCK" 
+      || element.hasAttribute('th:replace')
+      || element.hasAttribute('layout:decorator')
   }
 
   getElementStringWithoutChildren(element: Element): [string, string]{
-    return ['','']
+    return null
   }
   
   process(element: Element, context: any): [string[], string[]] {

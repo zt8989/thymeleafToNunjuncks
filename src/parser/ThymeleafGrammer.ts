@@ -3,10 +3,10 @@ import { Rule } from "./Rule";
 import { Sequence, orderChoice, RegularExpression } from "./helper";
 
 export default new Grammer("thymeleaf", 
-	new Rule('Expression', [/\(/, orderChoice('Expression', 'IfElseExpression'), /\)/]),
-	new Rule('IfElseExpression', 
-		['VariableExpression', /\?/, 'VariableExpression', /:/, 'VariableExpression'],
-	),
+	// new Rule('Expression', [/\(/, orderChoice('Expression', 'IfElseExpression', 'VariableExpression', 'Nothing'), /\)/]),
+	// new Rule('IfElseExpression', 
+	// 	['Expression', /\?/, 'Expression', /:/, 'Expression'],
+	// ),
 	new Rule('Operand',
 		orderChoice(
 			'VariableExpression',
@@ -14,10 +14,10 @@ export default new Grammer("thymeleaf",
 		)
 	),
 	new Rule('VariableExpression',
-		[/\${/, 'Identifier', /\}/],([l, id, r]) => ([id])
+		RegularExpression(/^\$\{(.+?)\}/, [/.+/]),([,exp]) => ([exp])
 	),
 	new Rule('LinkExpression',
-		RegularExpression(/^@\{(.+?)(\(.+\))?\}$/, ['Url', 'UrlParameters']),
+		RegularExpression(/^@\{(.+?)(\(.+\))?\}/, ['Url', 'UrlParameters']),
 		([, url, parameters]) => [`'${url}'`]
 	),
 	new Rule('Url', /.+/),

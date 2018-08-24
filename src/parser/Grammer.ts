@@ -38,6 +38,11 @@ export default class Grammer {
           break
         case "#":
           rule = this.findRuleByName('Nothing')
+        case '(':
+        case ')':
+        case ':':
+        case '?':
+          rule = new Rule('Continue', /./)
         break
       }
       return rule

@@ -17,8 +17,10 @@ import SrcAttributeProcessor from './processors/SrcAttributeProcessor';
 import InlineAttributeProcessor from './processors/InlineAttributeProcessor';
 import WithAttributeProcessor from './processors/WithAttributeProcessor';
 import ReplaceAttributeProcessor from './processors/ReplaceAttributeProcessor';
+import LayoutAttributeProcessor from './processors/LayoutAttributeProcessor';
+import EachAttributeProcessor from './processors/EachAttributeProcessor';
 
-function deserialize(htmlString: string | Buffer) {
+function deserialize(htmlString: string) {
   const dom = new JSDOM(htmlString)
   return dom
 }
@@ -27,7 +29,7 @@ function serialize(dom: jsdom.JSDOM) {
   return dom.serialize()
 }
 
-class convertEngine {
+export default class convertEngine {
   private htmlList: string[]
   private processors: ElementProcessor[]
   private matcher: Matcher
@@ -36,6 +38,7 @@ class convertEngine {
     this.htmlList = []
     this.matcher = new Matcher()
     const attributeProcessors = [
+      new LayoutAttributeProcessor(),
       new TextAttributeProcessor(),
       new HrefAttributeProcessor(),
       new SrcAttributeProcessor(),
@@ -43,36 +46,30 @@ class convertEngine {
       new IfAttributeProcessor(), 
       new FragmentAttributeProcessor(),
       new WithAttributeProcessor(),
-      new ReplaceAttributeProcessor()
+      new ReplaceAttributeProcessor(),
+      new EachAttributeProcessor()
     ]
     this.processors = [new BlockProcessor(attributeProcessors),
       new DefaultProcessor(attributeProcessors)]
   }
 
-  process(template: string | Buffer, content = {}) {
+  process(template: string, content = {}) {
     let dom = deserialize(template)
     let document = dom.window.document
     let rootElement = document.firstElementChild
     return this.processNode(rootElement, Object.assign({}, content))
-      .then(() => {
-        // TODO: Special case, remove the xmlns:th namespace from the document.
-        //       This should be handled like in main Thymeleaf where it's just
-        //       another processor that runs on the document.
-        // if (rootElement.hasAttribute(XML_NAMESPACE_ATTRIBUTE)) {
-        // rootElement.removeAttribute(XML_NAMESPACE_ATTRIBUTE);
-        // }
-        return serialize(dom)
-      })
   }
 
-  processFile() {
+  processFile(fileName: string) {
     const readFile = util.promisify(fs.readFile)
-    readFile(path.join(__dirname, './admin.html')).then(content => {
-      this.process(content).then(() => console.log(this.htmlList.join('\n')))
+    const [file, ext] = fileName.split('.')
+    readFile(path.join(__dirname, fileName), { encoding: 'utf8' }).then(content => {
+      this.process(content).then(htmlList => {})
     })
   }
 
 
+  html: ''
 
   /**
    *
@@ -91,16 +88,22 @@ class convertEngine {
     }
 
     this.htmlList.push(...start)
+    this.html += start.join('')
     if(element.children.length > 0){
       for (let child of element.children) {
         await this.processNode(child, context)
       }
     } else {
-      this.htmlList.push(element.textContent || "")
+      if(element.textContent){
+        this.htmlList.push(element.textContent)
+        console.log(element.textContent)
+      }
     }
 
     this.htmlList.push(...end)
+    this.html += end.join('')
+    return this.htmlList
   }
 }
 
-new convertEngine().processFile()
+new convertEngine().processFile('detail.html')
