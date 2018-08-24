@@ -15,16 +15,42 @@ export default class Grammer {
   accept(input: InputBuffer, parser: Parser): MatchResult{
     let matchResult: string[] = []
     while(!input.end()){
-      let i = 0
-      for(;i<this.rules.length;i++){
-        let result = this.rules[i].accept(input, parser)
+      let rule: Rule
+      switch(input.lookAhead()){
+        case "'":
+          rule = this.findRuleByName('StringLiteral')
+          break
+        case "@":
+          rule = this.findRuleByName('LinkExpression')
+          break
+        case "$":
+          rule = this.findRuleByName('VariableExpression')
+          break
+        case "+":
+        case "-":
+        case "*":
+        case "/":
+          rule = this.findRuleByName('Op')
+          break
+      }
+      if(rule){
+        let result = rule.accept(input, parser)
         if(result){
           matchResult = matchResult.concat(result)
-          break
+        }else{
+          return null
         }
-      }
-      if(i === this.rules.length){
-        return null
+      }else{
+        let i = 0
+        for(;i<this.rules.length;i++){
+          let result = input.markAndReset(() => this.rules[i].accept(input, parser))
+          if(result){
+            matchResult = matchResult.concat(result)
+          }
+          if(i === this.rules.length){
+            return null
+          }
+        }
       }
     }
     return matchResult

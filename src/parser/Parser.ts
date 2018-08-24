@@ -15,13 +15,13 @@ export default class Parser {
     return matchResult
   }
 
-  parseExpression(input: InputBuffer, expression: Match | Match[]):MatchResult {
+  parseExpression(input: InputBuffer, expression: Match | Match[]):any {
     if(expression instanceof RegExp){
       const result = input.read(expression)
       if(!result){
         return null
       }
-      return [result[0]]
+      return result[0]
     } else if(typeof expression === 'string'){
       let rule = this.grammer.findRuleByName(expression)
       return rule.accept(input, this)
@@ -32,7 +32,7 @@ export default class Parser {
         if(!result){
           return null
         }
-        matchResult.push(result[0])
+        matchResult.push(result)
       }
       return matchResult
     } else {

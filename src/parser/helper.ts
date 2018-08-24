@@ -24,3 +24,24 @@ export function orderChoice(...sequence: Match[]){
     })
   }
 }
+
+export const RegularExpression = (expression: RegExp, matchers: Match[]) => (input:InputBuffer, parser: Parser) => {
+	return input.markAndReset(() => {
+		let result = input.read(expression);
+		if (result) {
+			let parseResults = [result[0]];
+			for (let i = 1; i < result.length; i++) {
+				let match = result[i];
+				if (match !== undefined) {
+					let parseResult = parser.parseExpression(new InputBuffer(match), matchers[i - 1]);
+					if (parseResult === null) {
+						return null;
+					}
+					parseResults.push(parseResult);
+				}
+			}
+			return parseResults;
+		}
+		return null;
+	});
+};

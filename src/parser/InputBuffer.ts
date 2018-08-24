@@ -11,7 +11,22 @@ export default class InputBuffer {
 
   end(){
     return this.input.length === this.position
-  }
+	}
+	
+	lookAhead(){
+    let remaining = this.input.substring(this.position)
+    let matchWhitespace = remaining.match(/^\s+/);
+    let leadingWhitespace: string  = ''
+    if (matchWhitespace) {
+			leadingWhitespace = matchWhitespace[0];
+			remaining = remaining.substring(leadingWhitespace.length);
+		}
+		if(remaining.length === 0){
+			return null
+		}else{
+			return remaining[0]
+		}
+	}
 
   read(pattern: RegExp){
     let remaining = this.input.substring(this.position)
