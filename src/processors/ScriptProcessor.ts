@@ -1,3 +1,4 @@
+import { EngineContext } from './../index';
 import ElementProcessor from "./ElementProcessor";
 import AttributeProcessor from "./AttributeProcessor";
 
@@ -12,7 +13,7 @@ export default class SingleElementProcessor implements ElementProcessor {
     return element.children.length === 0
   }  
   
-  process(element: Element, context: any): [string[], string[]] {
+  process(element: Element, context: EngineContext): [string[], string[]] {
     return [[element.outerHTML], [""]]
   }
 }

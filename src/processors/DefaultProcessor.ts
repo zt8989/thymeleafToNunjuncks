@@ -1,3 +1,4 @@
+import { EngineContext } from './../index';
 import ElementProcessor from "./ElementProcessor";
 import AttributeProcessor from "./AttributeProcessor";
 import { getElementStringWithoutChildren } from "./helper";
@@ -17,7 +18,7 @@ export default class DefaultProcessor implements ElementProcessor {
     return getElementStringWithoutChildren(element)
   }
   
-  process(element: Element, context: any): [string[], string[]] {
+  process(element: Element, context: EngineContext): [string[], string[]] {
     const htmlData:[string[], string[]] = [[] , []]
     for(let processor of this.attributeProcessors){
       if(processor.accept(element)){

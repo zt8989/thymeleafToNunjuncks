@@ -1,3 +1,4 @@
+import { EngineContext } from './../index';
 import AttributeProcessor from "./AttributeProcessor";
 import DefaultProcessor from "./DefaultProcessor";
 
@@ -16,7 +17,7 @@ export default class BlockProcessor extends DefaultProcessor{
     return null
   }
   
-  process(element: Element, context: any): [string[], string[]] {
+  process(element: Element, context: EngineContext): [string[], string[]] {
     return super.process(element, context)
   }
 }

@@ -1,3 +1,4 @@
+import { EngineContext } from './../index';
 import AttributeProcessor from "./AttributeProcessor";
 import ParserFactory from '../parser/ParserFactory'
 
@@ -14,7 +15,7 @@ export default class HTMLAttributeProcessor implements AttributeProcessor{
     return element.hasAttribute(this.fullAttribute)
   }  
   
-  process(element: Element, context: any): [string, string] | void {
+  process(element: Element, context: EngineContext): [string, string] | void {
     const value = element.getAttribute(this.fullAttribute)
     const parsed = ParserFactory.parse(value)
     element.removeAttribute(this.fullAttribute)
