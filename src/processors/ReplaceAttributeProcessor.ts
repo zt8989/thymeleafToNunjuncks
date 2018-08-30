@@ -11,6 +11,6 @@ export default class FragmentAttributeProcessor implements AttributeProcessor{
     let value = element.getAttribute(this.attribute)
     element.removeAttribute(this.attribute)
     value = value.split('::')[0].trim()
-    return [`{% inclue '${value}' %}`, '']
+    return [`{% include '${value}.${context.engine.options.extension}' %}`, '']
   }
 }
