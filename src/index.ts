@@ -21,6 +21,7 @@ import LayoutAttributeProcessor from './processors/LayoutAttributeProcessor';
 import EachAttributeProcessor from './processors/EachAttributeProcessor';
 import HeadProcessor from './processors/HeadProcessor';
 import BodyProcessor from './processors/BodyProcessor';
+import ValueAttributeProcessor from './processors/ValueAttributeProcessor';
 
 function deserialize(htmlString: string) {
   const dom = new JSDOM(htmlString)
@@ -62,7 +63,8 @@ export default class convertEngine {
       new FragmentAttributeProcessor(),
       new WithAttributeProcessor(),
       new ReplaceAttributeProcessor(),
-      new EachAttributeProcessor()
+      new EachAttributeProcessor(),
+      new ValueAttributeProcessor()
     ]
     this.processors = [
       new HeadProcessor(attributeProcessors),
@@ -115,7 +117,7 @@ export default class convertEngine {
     if(element.childNodes.length > 0){
       for (let child of element.childNodes) {
         if(child.nodeType === 3){
-          this.htmlList.push(' '.repeat(level * 2) + child.textContent)
+          this.htmlList.push(' '.repeat(level * 2) + child.textContent.trim())
         }else if(child.nodeType === 1){
           await this.processNode(<Element>child, context, level + 1)
         }
