@@ -1,3 +1,4 @@
+import { defaultContext } from './../../src/index';
 import DefaultProcessor from '../../src/processors/DefaultProcessor'
 import { JSDOM } from 'jsdom'
 import IfAttributeProcessor from '../../src/processors/IfAttributeProcessor';
@@ -24,7 +25,7 @@ test('HrefAttributeProcessor', function () {
   const element = JSDOM.fragment("<script th:href=\"@{/admin/vendors/modjs/mod.js(t=${timestamp})}\"></script>").firstElementChild
   expect(element).not.toBeNull()
   if(element){
-    processor.process(element, {})
+    processor.process(element, defaultContext)
     expect(processor.accept(element)).toBe(false)
     expect(element.outerHTML).toBe("<script href=\"{{ '/admin/vendors/modjs/mod.js' }}\"></script>")
   }
@@ -35,7 +36,7 @@ test('HrefAttributeProcessor', function () {
   const element = JSDOM.fragment("<script th:href=\"@{/admin/vendors/modjs/mod.js(t=${timestamp})}\"></script>").firstElementChild
   expect(element).not.toBeNull()
   if(element){
-    processor.process(element, {})
+    processor.process(element, defaultContext)
     expect(processor.accept(element)).toBe(false)
     expect(element.outerHTML).toBe("<script href=\"{{ '/admin/vendors/modjs/mod.js' }}\"></script>")
   }
@@ -46,7 +47,7 @@ test('TextAttributeProcessor', function () {
   const element = JSDOM.fragment("<title th:text=\"${pageTitle} + ' - 运输管理系统'\"></title>").firstElementChild
   expect(element).not.toBeNull()
   if(element){
-    processor.process(element, {})
+    processor.process(element, defaultContext)
     expect(processor.accept(element)).toBe(false)
     expect(element.textContent).toBe("{{ pageTitle + ' - 运输管理系统' }}")
   }
@@ -57,7 +58,7 @@ test('SrcAttributeProcessor', function () {
   const element = JSDOM.fragment(`<script th:src="@{/admin/views/invoice/detail.js(t=\${timestamp})}"></script>`).firstElementChild
   expect(element).not.toBeNull()
   if(element){
-    processor.process(element, {})
+    processor.process(element, defaultContext)
     expect(processor.accept(element)).toBe(false)
     expect(element.outerHTML).toBe(`<script src="{{ '/admin/views/invoice/detail.js' }}"></script>`)
   }
