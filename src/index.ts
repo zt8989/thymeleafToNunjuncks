@@ -22,6 +22,8 @@ import EachAttributeProcessor from './processors/EachAttributeProcessor';
 import HeadProcessor from './processors/HeadProcessor';
 import BodyProcessor from './processors/BodyProcessor';
 import ValueAttributeProcessor from './processors/ValueAttributeProcessor';
+import ParserFacade from './parser/ParserFacade';
+import ObjectAttributeProcessor from './processors/ObjectAttributeProcessor';
 
 function deserialize(htmlString: string) {
   const dom = new JSDOM(htmlString)
@@ -42,6 +44,7 @@ export type EngineContext = {
   [key: string]: any
 }
 
+
 export default class convertEngine {
   private htmlList: string[]
   private processors: ElementProcessor[]
@@ -49,6 +52,8 @@ export default class convertEngine {
   public options: EngineOptions = {
     extension: 'nj',
   }
+  public context: EngineContext
+  public parser:ParserFacade
 
   constructor(options?: EngineOptions){
     this.htmlList = []
@@ -64,7 +69,8 @@ export default class convertEngine {
       new WithAttributeProcessor(),
       new ReplaceAttributeProcessor(),
       new EachAttributeProcessor(),
-      new ValueAttributeProcessor()
+      new ValueAttributeProcessor(),
+      new ObjectAttributeProcessor()
     ]
     this.processors = [
       new HeadProcessor(attributeProcessors),
@@ -73,13 +79,15 @@ export default class convertEngine {
       new DefaultProcessor(attributeProcessors)
     ]
     this.options = Object.assign(this.options, options)
+    this.context = { engine: this, extend: false }
+    this.parser = ParserFacade.createParser(this.context)
   }
 
-  process(template: string, content = {}) {
+  process(template: string) {
     let dom = deserialize(template)
     let document = dom.window.document
     let rootElement = document.firstElementChild
-    return this.processNode(rootElement, Object.assign({}, content, { engine: this, extend: false }))
+    return this.processNode(rootElement, this.context)
   }
 
   processFile(fileName: string, output?: string) {
@@ -135,3 +143,8 @@ export default class convertEngine {
 }
 
 // new convertEngine().processFile('detail.html')
+
+export const defaultContext: EngineContext = {
+  engine: new convertEngine(),
+  extend: false
+}

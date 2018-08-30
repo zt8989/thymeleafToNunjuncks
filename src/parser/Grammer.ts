@@ -31,7 +31,7 @@ export default class Grammer {
           break
         case "*":
           if(input.lookAhead(2) === '*{'){
-            rule = this.findRuleByName('Nothing')
+            rule = this.findRuleByName('StarExpression')
           }else{
             rule = this.findRuleByName('Op')
           }

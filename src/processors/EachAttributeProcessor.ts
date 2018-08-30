@@ -1,7 +1,7 @@
 import { EngineContext } from './../index';
 import AttributeProcessor from "./AttributeProcessor";
 import { getElementStringWithoutChildren } from "./helper";
-import ParserFactory from '../parser/ParserFactory'
+import ParserFactory from '../parser/ParserFacade'
 import _ from "lodash";
 
 export default class WitchAttributeProcessor implements AttributeProcessor{
@@ -15,8 +15,7 @@ export default class WitchAttributeProcessor implements AttributeProcessor{
     const value = element.getAttribute(this.attribute)
     element.removeAttribute(this.attribute)
     let [key, values] = value.split(":")
-    let parser = ParserFactory.createParser()
-    values = _.flatten(parser.parse(values.trim())).join(' ') 
+    values = context.engine.parser.parse(values.trim())
     return [`{% for ${key.trim()} in ${values} %}`, '{% endfor %}']
   }
 }

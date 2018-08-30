@@ -14,11 +14,15 @@ export default new Grammer("thymeleaf",
 		)
 	),
 	new Rule('VariableExpression',
-		RegularExpression(/^\$\{(.+?)\}/, [/.+/]),([,exp]) => ([exp])
+		RegularExpression(/^\$\{(.+?)\}/, [/.+/]),([,exp]) => context => ([exp])
 	),
 	new Rule('LinkExpression',
 		RegularExpression(/^@\{(.+?)(\(.+\))?\}/, ['Url', 'UrlParameters']),
-		([, url, parameters]) => [`'${url}'`]
+		([, url, parameters]) => context => [`'${url}'`]
+	),
+	new Rule('StarExpression',
+		RegularExpression(/^\*\{(.+?)\}/, [/.+/]),
+		([, exp]) => context => ([`${context.object}.${exp}`])
 	),
 	new Rule('Url', /.+/),
 	new Rule('UrlParameters', /\((.+)\)/),
@@ -63,5 +67,5 @@ export default new Grammer("thymeleaf",
 
 	new Rule('Op', /[\+\-\*\/]/),
   new Rule('Identifier', /[a-zA-Z_][\w\.]*/),
-	new Rule('Nothing', /^$/, () => []),
+	new Rule('Nothing', /^$/, () => context => []),
 )

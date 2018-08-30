@@ -1,12 +1,15 @@
+import { EngineContext } from './../index';
 import Grammer from "./Grammer";
 import InputBuffer from "./InputBuffer";
 import { Match, MatchResult } from "./Match";
 
 export default class Parser {
   grammer: Grammer
+  context: EngineContext
   
-  constructor(grammer: Grammer){
+  constructor(grammer: Grammer, context: EngineContext){
     this.grammer = grammer
+    this.context = context
   }
 
   parse(input: string){
@@ -36,7 +39,7 @@ export default class Parser {
       }
       return matchResult
     } else {
-      return expression(input, this)
+      return expression(input, this)(this.context)
     }
   }
 }

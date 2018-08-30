@@ -16,6 +16,6 @@ export class Rule {
 
   accept(input: InputBuffer, parser: Parser): MatchResult{
     const matchResult = parser.parseExpression(input, this.expression)
-    return matchResult ? this.matchProcessor(matchResult): null
+    return matchResult ? this.matchProcessor(matchResult)(parser.context): null
   }
 }
